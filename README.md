@@ -1,6 +1,6 @@
 # OrbitalWatch Vision
 
-Classificação de imagens do Sentinel-2 (EuroSAT) para o projeto OrbitalWatch — Global Solution, eixo Indústria Espacial.
+Classificação de imagens do Sentinel-2 (EuroSAT) usando redes neurais convolucionais treinadas do zero.
 
 ## Integrantes
 
@@ -13,111 +13,71 @@ Classificação de imagens do Sentinel-2 (EuroSAT) para o projeto OrbitalWatch �
 
 ## Objetivo
 
-Classificar recortes RGB em 10 classes de cobertura/uso do solo (floresta, área urbana, agricultura, rio, etc.) com duas CNNs treinadas do zero, sem modelos pré-treinados.
+Classificar imagens RGB em 10 classes de uso do solo (floresta, urbano, agricultura, rios, etc.) utilizando CNNs desenvolvidas do zero.
 
 ## Dataset
 
-- Fonte: [EuroSAT](https://github.com/phelber/EuroSAT)
-- 10 classes, ~27 mil imagens
-- Divisão: 70% treino, 15% validação, 15% teste (`python eurosat.py`, seed 42)
-- Imagens 64×64, normalização 1/255, flip horizontal no treino
+EuroSAT (Sentinel-2), com aproximadamente 27 mil imagens distribuídas em 10 classes. As imagens possuem tamanho 64x64 RGB e foram normalizadas com 1/255. O dataset foi dividido em 70% treino, 15% validação e 15% teste com seed 42.
 
-Estrutura após o split:
+Estrutura esperada:
 
-```
 dataset_eurosat/
   2750/
   train/
   val/
   test/
-```
 
-Se o repositório não incluir as pastas `train/`, `val/` e `test/` (tamanho), baixe o EuroSAT, extraia em `2750/` e execute `python eurosat.py`.
+Caso as pastas de treino, validação e teste não existam, execute:
 
-## Ambientes do projeto
-
-O projeto possui duas formas de execução:
-
-1. **Treinamento e análise (ML)**
-   - Notebook Jupyter
-   - Modelos CNN
-
-2. **Demonstração funcional (Streamlit)**
-   - Interface web para predição com imagens novas
+python eurosat.py
 
 ## Instalação
 
-## Instalação (Treinamento / Notebook)
+python3.12 -m venv .venv  
+source .venv/bin/activate  
+pip install -r requirements.txt  
 
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+## Treinamento
 
-```
+O treinamento pode ser feito via notebook ou scripts.
 
+Notebook:
 
----
+jupyter notebook notebook.ipynb
 
-## 3. Criando ambiente de teste separado.
+Scripts:
 
-```md
-## Demonstração funcional (Streamlit)
-
-Para rodar a interface de predição:
-
-```bash
-python3.12 -m venv .venv_app
-source .venv_app/bin/activate
-pip install streamlit
-streamlit run app.py
-```
-
-`TRAIN_MODELS = False` usa os pesos em `models/` e os gráficos em `outputs/`.  
-`TRAIN_MODELS = True` treina as duas redes no notebook.
-
-## Treino (script)
-
-```bash
-python src/train.py --data-dir dataset_eurosat --model simple_cnn --epochs 25 --image-size 64
-python src/train.py --data-dir dataset_eurosat --model deep_cnn --epochs 25 --image-size 64
-```
-
-Saídas: `models/` (pesos) e `outputs/` (curvas, matriz de confusão, métricas JSON).
+python src/train.py --data-dir dataset_eurosat --model simple_cnn --epochs 25 --image-size 64  
+python src/train.py --data-dir dataset_eurosat --model deep_cnn --epochs 25 --image-size 64  
 
 ## Predição
 
-```bash
 python src/predict.py \
   --model-path models/deep_cnn_best.keras \
   --classes-path models/deep_cnn_classes.json \
   --image-path caminho/imagem.jpg \
-  --image-size 64
-```
+  --image-size 64  
 
-## Demo Streamlit
+## Demonstração funcional (Streamlit)
 
-```bash
-streamlit run app.py
-```
+python3.12 -m venv .venv_app  
+source .venv_app/bin/activate  
+pip install streamlit  
+streamlit run app.py  
+
+## Resultados
+
+Simple CNN: ~84% acurácia | ~0.47 loss  
+Deep CNN: ~90.7% acurácia | ~0.28 loss  
+
+Meta do projeto: ≥ 88% (atingida pelo modelo Deep CNN)
 
 ## Arquivos principais
 
-| Arquivo | Função |
-|---------|--------|
-| `notebook.ipynb` | Treino, avaliação e relatório |
-| `src/models.py` | Arquiteturas CNN |
-| `src/train.py` | Treino por linha de comando |
-| `src/data.py` | Leitura do dataset |
-| `src/predict.py` | Classificar uma imagem |
-| `eurosat.py` | Split train/val/test |
-| `app.py` | Interface de teste |
-
-## Resultados (teste)
-
-| Modelo | Acurácia | Loss |
-|--------|----------|------|
-| Simple CNN | ~84% | ~0,47 |
-| Deep CNN | ~90,7% | ~0,28 |
-
-Meta do trabalho: ≥ 88% — atingida pelo Deep CNN.
+notebook.ipynb → treino e avaliação  
+src/models.py → arquiteturas CNN  
+src/train.py → treinamento  
+src/data.py → carregamento do dataset  
+src/predict.py → inferência  
+eurosat.py → split do dataset  
+app.py → interface Streamlit
