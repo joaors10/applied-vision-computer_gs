@@ -34,18 +34,43 @@ dataset_eurosat/
 
 Se o repositório não incluir as pastas `train/`, `val/` e `test/` (tamanho), baixe o EuroSAT, extraia em `2750/` e execute `python eurosat.py`.
 
+## Ambientes do projeto
+
+O projeto possui duas formas de execução:
+
+1. **Treinamento e análise (ML)**
+   - Notebook Jupyter
+   - Modelos CNN
+
+2. **Demonstração funcional (Streamlit)**
+   - Interface web para predição com imagens novas
+
 ## Instalação
+
+## Instalação (Treinamento / Notebook)
 
 ```bash
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
 ```
 
-## Notebook
+
+---
+
+## 3. Criando ambiente de teste separado.
+
+```md
+## Demonstração funcional (Streamlit)
+
+Para rodar a interface de predição:
 
 ```bash
-jupyter notebook notebook.ipynb
+python3.12 -m venv .venv_app
+source .venv_app/bin/activate
+pip install streamlit
+streamlit run app.py
 ```
 
 `TRAIN_MODELS = False` usa os pesos em `models/` e os gráficos em `outputs/`.  
